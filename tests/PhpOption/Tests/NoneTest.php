@@ -92,6 +92,17 @@ class NoneTest extends \PHPUnit_Framework_TestCase
         }));
     }
 
+    public function testFilterIsA()
+    {
+      $this->assertSame($this->none, $this->none->filterIsA(stdClass::class));
+    }
+
+    public function testFilterIsOneOf()
+    {
+      $this->assertSame($this->none, $this->none->filterIsOneOf(stdClass::class));
+      $this->assertSame($this->none, $this->none->filterIsOneOf([stdClass::class]));
+    }
+
     public function testSelect()
     {
         $this->assertSame($this->none, $this->none->select(null));
