@@ -291,6 +291,29 @@ abstract class Option implements IteratorAggregate
     abstract public function filterNot($callable);
 
     /**
+     * Check if the option is an instanceof or subclass of the given parameter
+     *
+     * @param string $class
+     *
+     * @return Option
+     */
+    abstract public function filterIsA($class);
+
+    /**
+     * Check if the option is an instanceof or subclass of any of the given parameters.
+     * If the first parameter is an array, all elements of the array are checked instead.
+     * Example:
+     * $opt = Option::fromValue(new stdClass());
+     * $opt->filterIsOneOf("unknown_type", stdClass::class) == true
+     * $opt->filterIsOneOf(["unknown_type", stdClass::class]) == true
+     *
+     * @param string $classes
+     *
+     * @return Option
+     */
+    abstract public function filterIsOneOf(...$classes);
+
+    /**
      * If the option is empty, it is returned immediately.
      *
      * If the option is non-empty, and its value does not equal the passed value

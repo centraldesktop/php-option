@@ -101,6 +101,16 @@ final class None extends Option
         return $this;
     }
 
+    public function filterIsA($class)
+    {
+      return $this;
+    }
+
+    public function filterIsOneOf(...$classes)
+    {
+      return $this;
+    }
+
     public function select($value)
     {
         return $this;

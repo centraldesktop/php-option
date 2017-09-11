@@ -126,6 +126,16 @@ final class LazyOption extends Option
         return $this->option()->filterNot($callable);
     }
 
+    public function filterIsA($class)
+    {
+        return $this->option()->filterIsA($class);
+    }
+
+    public function filterIsOneOf(...$classes)
+    {
+        return $this->option()->filterIsOneOf($classes);
+    }
+
     public function select($value)
     {
         return $this->option()->select($value);
