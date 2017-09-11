@@ -132,7 +132,7 @@ final class Some extends Option
             return None::create();
         }
 
-        if (is_array($classes[0])) {
+        if (is_array($classes[0]) || $classes[0] instanceof \Traversable) {
             $classes = $classes[0];
         }
 
@@ -142,7 +142,7 @@ final class Some extends Option
             }
         }
 
-        return None::create();;
+        return None::create();
     }
 
     public function select($value)

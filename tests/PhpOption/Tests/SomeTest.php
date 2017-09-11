@@ -105,6 +105,7 @@ class SomeTest extends \PHPUnit_Framework_TestCase
 
       $this->assertSame($some, $some->filterIsOneOf(\stdClass::class, 'unknown'));
       $this->assertSame($some, $some->filterIsOneOf([\stdClass::class, 'unknown']));
+      $this->assertSame($some, $some->filterIsOneOf(new \ArrayIterator([\stdClass::class, 'unknown'])));
     }
 
     public function testSelect()
