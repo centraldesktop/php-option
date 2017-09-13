@@ -88,6 +88,26 @@ class SomeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($some, $some->filterNot(function($v) { return strlen($v) === 0; }));
     }
 
+    public function testFilterIsA()
+    {
+        $some = new Some(new \stdClass());
+
+        $this->assertInstanceOf('PhpOption\None', $some->filterIsA('unknown'));
+        $this->assertSame($some, $some->filterIsA(\stdClass::class));
+    }
+
+    public function testFilterIsOneOf()
+    {
+      $some = new Some(new \stdClass());
+
+      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf('unknown', 'unknown2'));
+      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf(['unknown', 'unknown2']));
+
+      $this->assertSame($some, $some->filterIsOneOf(\stdClass::class, 'unknown'));
+      $this->assertSame($some, $some->filterIsOneOf([\stdClass::class, 'unknown']));
+      $this->assertSame($some, $some->filterIsOneOf(new \ArrayIterator([\stdClass::class, 'unknown'])));
+    }
+
     public function testSelect()
     {
         $some = new Some('foo');

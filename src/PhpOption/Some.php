@@ -117,6 +117,34 @@ final class Some extends Option
         return None::create();
     }
 
+    public function filterIsA($class)
+    {
+        if (is_a($this->value, $class)) {
+            return $this;
+        }
+
+        return None::create();
+    }
+
+    public function filterIsOneOf(...$classes)
+    {
+        if (count($classes) < 1) {
+            return None::create();
+        }
+
+        if (is_array($classes[0]) || $classes[0] instanceof \Traversable) {
+            $classes = $classes[0];
+        }
+
+        foreach($classes as $class) {
+            if (is_a($this->value, $class)) {
+                return $this;
+            }
+        }
+
+        return None::create();
+    }
+
     public function select($value)
     {
         if ($this->value === $value) {
