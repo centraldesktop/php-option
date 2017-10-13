@@ -19,6 +19,8 @@
 namespace PhpOption;
 
 use ArrayIterator;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 final class Some extends Option
 {
@@ -132,9 +134,9 @@ final class Some extends Option
             return None::create();
         }
 
-        if (is_array($classes[0]) || $classes[0] instanceof \Traversable) {
-            $classes = $classes[0];
-        }
+        $classes = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($classes)
+        );
 
         foreach($classes as $class) {
             if (is_a($this->value, $class)) {

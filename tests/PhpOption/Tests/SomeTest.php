@@ -98,14 +98,17 @@ class SomeTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterIsOneOf()
     {
-      $some = new Some(new \stdClass());
+        $some = new Some(new \stdClass());
 
-      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf('unknown', 'unknown2'));
-      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf(['unknown', 'unknown2']));
+        $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf('unknown', 'unknown2'));
+        $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf(['unknown', 'unknown2']));
 
-      $this->assertSame($some, $some->filterIsOneOf(\stdClass::class, 'unknown'));
-      $this->assertSame($some, $some->filterIsOneOf([\stdClass::class, 'unknown']));
-      $this->assertSame($some, $some->filterIsOneOf(new \ArrayIterator([\stdClass::class, 'unknown'])));
+        $this->assertSame($some, $some->filterIsOneOf(\stdClass::class, 'unknown'));
+        $this->assertSame($some, $some->filterIsOneOf([\stdClass::class, 'unknown']));
+        $this->assertSame($some, $some->filterIsOneOf(new \ArrayIterator([\stdClass::class, 'unknown'])));
+        $this->assertSame($some, $some->filterIsOneOf([[\stdClass::class, 'unknown']]));
+        $this->assertSame($some, $some->filterIsOneOf([[[\stdClass::class, 'unknown']]]));
+        $this->assertSame($some, $some->filterIsOneOf([[[[\stdClass::class, 'unknown']]]]));
     }
 
     public function testSelect()
