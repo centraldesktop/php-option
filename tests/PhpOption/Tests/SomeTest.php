@@ -2,13 +2,17 @@
 
 namespace PhpOption\Tests;
 
+use stdClass;
+use ArrayObject;
+use ArrayIterator;
+use PhpOption\None;
 use PhpOption\Some;
 
 class SomeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
-        $some = new \PhpOption\Some('foo');
+        $some = new Some('foo');
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
@@ -18,7 +22,7 @@ class SomeTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $some = \PhpOption\Some::create('foo');
+        $some = Some::create('foo');
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
@@ -28,9 +32,9 @@ class SomeTest extends \PHPUnit_Framework_TestCase
 
     public function testOrElse()
     {
-        $some = \PhpOption\Some::create('foo');
-        $this->assertSame($some, $some->orElse(\PhpOption\None::create()));
-        $this->assertSame($some, $some->orElse(\PhpOption\Some::create('bar')));
+        $some = Some::create('foo');
+        $this->assertSame($some, $some->orElse(None::create()));
+        $this->assertSame($some, $some->orElse(Some::create('bar')));
     }
 
     public function testifDefined()
@@ -90,22 +94,36 @@ class SomeTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterIsA()
     {
-        $some = new Some(new \stdClass());
+        $some = new Some(new stdClass());
 
         $this->assertInstanceOf('PhpOption\None', $some->filterIsA('unknown'));
-        $this->assertSame($some, $some->filterIsA(\stdClass::class));
+        $this->assertSame($some, $some->filterIsA(stdClass::class));
     }
 
     public function testFilterIsOneOf()
     {
-      $some = new Some(new \stdClass());
+        $some = new Some(new stdClass());
 
-      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf('unknown', 'unknown2'));
-      $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf(['unknown', 'unknown2']));
+        $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf('unknown', 'unknown2'));
+        $this->assertInstanceOf('PhpOption\None', $some->filterIsOneOf(['unknown', 'unknown2']));
 
-      $this->assertSame($some, $some->filterIsOneOf(\stdClass::class, 'unknown'));
-      $this->assertSame($some, $some->filterIsOneOf([\stdClass::class, 'unknown']));
-      $this->assertSame($some, $some->filterIsOneOf(new \ArrayIterator([\stdClass::class, 'unknown'])));
+        $this->assertSame($some, $some->filterIsOneOf(stdClass::class, 'unknown'));
+        $this->assertSame($some, $some->filterIsOneOf([stdClass::class, 'unknown']));
+        $this->assertSame($some, $some->filterIsOneOf([[stdClass::class, 'unknown']]));
+        $this->assertSame($some, $some->filterIsOneOf([[[stdClass::class, 'unknown']]]));
+        $this->assertSame($some, $some->filterIsOneOf([[[[stdClass::class, 'unknown']]]]));
+        $this->assertSame($some, $some->filterIsOneOf(new ArrayIterator([stdClass::class, 'unknown'])));
+        $this->assertSame($some, $some->filterIsOneOf([
+            new ArrayIterator([stdClass::class, 'unknown1']),
+            new ArrayIterator(['unknown2', 'unknown3'])
+        ]));
+
+        $obj = new stdClass();
+        $obj->one   = stdClass::class;
+        $obj->two   = 'unknown1';
+        $obj->thrww = 'unknown2';
+
+        $this->assertSame($some, $some->filterIsOneOf(new ArrayObject($obj)));
     }
 
     public function testSelect()
@@ -177,7 +195,7 @@ class Repository
     public function getLastRegisteredUsername()
     {
         if (empty($this->users)) {
-            return \PhpOption\None::create();
+            return None::create();
         }
 
         return new Some(end($this->users));
@@ -190,7 +208,7 @@ class Repository
             return new Some(array('name' => $name));
         }
 
-        return \PhpOption\None::create();
+        return None::create();
     }
 
     public function getDefaultUser()
