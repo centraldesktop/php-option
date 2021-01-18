@@ -2,10 +2,15 @@
 
 namespace PhpOption\Tests;
 
+use PhpOption\None;
+use PhpOption\Some;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+
 /**
  * @group performance
  */
-class PerformanceTest extends \PHPUnit_Framework_TestCase
+class PerformanceTest extends TestCase
 {
     private $traditionalRepo;
     private $phpOptionRepo;
@@ -15,19 +20,21 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $traditionalTime = microtime(true);
         for ($i=0; $i<10000; $i++) {
             if (null === $rs = $this->traditionalRepo->findMaybe(true)) {
-                $rs = new \stdClass();
+                $rs = new stdClass();
             }
         }
         $traditionalTime = microtime(true) - $traditionalTime;
 
         $phpOptionTime = microtime(true);
         for ($i=0; $i<10000; $i++) {
-            $rs = $this->phpOptionRepo->findMaybe(true)->getOrElse(new \stdClass);
+            $rs = $this->phpOptionRepo->findMaybe(true)->getOrElse(new stdClass);
         }
         $phpOptionTime = microtime(true) - $phpOptionTime;
 
         $overheadPerInvocation = ($phpOptionTime - $traditionalTime) / 10000;
         printf("Overhead per invocation (some case): %.9fs\n", $overheadPerInvocation);
+
+        $this->assertTrue(true); // Make test not risky
     }
 
     public function testNoneCase()
@@ -35,19 +42,21 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $traditionalTime = microtime(true);
         for ($i=0; $i<10000; $i++) {
             if (null === $rs = $this->traditionalRepo->findMaybe(false)) {
-                $rs = new \stdClass();
+                $rs = new stdClass();
             }
         }
         $traditionalTime = microtime(true) - $traditionalTime;
 
         $phpOptionTime = microtime(true);
         for ($i=0; $i<10000; $i++) {
-            $rs = $this->phpOptionRepo->findMaybe(false)->getOrElse(new \stdClass);
+            $rs = $this->phpOptionRepo->findMaybe(false)->getOrElse(new stdClass);
         }
         $phpOptionTime = microtime(true) - $phpOptionTime;
 
         $overheadPerInvocation = ($phpOptionTime - $traditionalTime) / 10000;
         printf("Overhead per invocation (none case): %.9fs\n", $overheadPerInvocation);
+
+        $this->assertTrue(true); // Make test not risky
     }
 
     protected function setUp()
@@ -62,7 +71,7 @@ class TraditionalRepo
     public function findMaybe($success)
     {
         if ($success) {
-            return new \stdClass;
+            return new stdClass;
         }
 
         return null;
@@ -74,9 +83,9 @@ class PhpOptionRepo
     public function findMaybe($success)
     {
         if ($success) {
-            return new \PhpOption\Some(new \stdClass);
+            return new Some(new stdClass);
         }
 
-        return \PhpOption\None::create();
+        return None::create();
     }
 }

@@ -2,13 +2,17 @@
 
 namespace PhpOption\Tests;
 
-use stdClass;
 use ArrayIterator;
-use PhpOption\Some;
-use PhpOption\None;
+use InvalidArgumentException;
 use PhpOption\LazyOption;
+use PhpOption\None;
+use PhpOption\Option;
+use PhpOption\Some;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
 
-class LazyOptionTest extends \PHPUnit_Framework_TestCase
+class LazyOptionTest extends TestCase
 {
     private $subject;
 
@@ -33,7 +37,7 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $some->getOrThrow(new \RuntimeException('does_not_exist')));
+        $this->assertEquals('foo', $some->getOrThrow(new RuntimeException('does_not_exist')));
         $this->assertFalse($some->isEmpty());
     }
 
@@ -50,7 +54,7 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $some->getOrThrow(new \RuntimeException('does_not_exist')));
+        $this->assertEquals('foo', $some->getOrThrow(new RuntimeException('does_not_exist')));
         $this->assertFalse($some->isEmpty());
     }
 
@@ -66,7 +70,7 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $some->getOrThrow(new \RuntimeException('does_not_exist')));
+        $this->assertEquals('foo', $some->getOrThrow(new RuntimeException('does_not_exist')));
         $this->assertFalse($some->isEmpty());
     }
 
@@ -84,13 +88,9 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $option->get());
         $this->assertEquals('foo', $option->getOrElse(null));
         $this->assertEquals('foo', $option->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $option->getOrThrow(new \RuntimeException('does_not_exist')));
+        $this->assertEquals('foo', $option->getOrThrow(new RuntimeException('does_not_exist')));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage None has no value
-     */
     public function testCallbackReturnsNull()
     {
         $option = LazyOption::create(array($this->subject, 'execute'));
@@ -105,13 +105,12 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('alt', $option->getOrElse('alt'));
         $this->assertEquals('alt', $option->getOrCall(function(){return 'alt';}));
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("None has no value");
+
         $option->get();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Expected instance of \PhpOption\Option
-     */
     public function testExceptionIsThrownIfCallbackReturnsNonOption()
     {
         $option = LazyOption::create(array($this->subject, 'execute'));
@@ -121,24 +120,23 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->will($this->returnValue(null));
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Expected instance of \PhpOption\Option");
+
         $this->assertFalse($option->isDefined());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid callback given
-     */
     public function testInvalidCallbackAndConstructor()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid callback given");
         new LazyOption('invalidCallback');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid callback given
-     */
     public function testInvalidCallbackAndCreate()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid callback given");
         LazyOption::create('invalidCallback');
     }
 
@@ -174,20 +172,12 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
 
     public function testFoldLeftRight()
     {
-        $callback = function() { };
+        $option   = Option::fromValue(5);
+        $callback = function($i) { return $i + 1; };
 
-        $option = $this->getMockForAbstractClass('PhpOption\Option');
-        $option->expects($this->once())
-            ->method('foldLeft')
-            ->with(5, $callback)
-            ->will($this->returnValue(6));
         $lazyOption = new LazyOption(function() use ($option) { return $option; });
         $this->assertSame(6, $lazyOption->foldLeft(5, $callback));
 
-        $option->expects($this->once())
-            ->method('foldRight')
-            ->with(5, $callback)
-            ->will($this->returnValue(6));
         $lazyOption = new LazyOption(function() use ($option) { return $option; });
         $this->assertSame(6, $lazyOption->foldRight(5, $callback));
     }
@@ -203,5 +193,14 @@ class LazyOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($some, $lazy_opt->filterIsOneOf(stdClass::class, 'unknown'));
         $this->assertSame($some, $lazy_opt->filterIsOneOf([stdClass::class, 'unknown']));
         $this->assertSame($some, $lazy_opt->filterIsOneOf(new ArrayIterator([stdClass::class, 'unknown'])));
+    }
+
+    public function testToString()
+    {
+        $lazy_opt = LazyOption::create(function() { return Option::fromValue(1); });
+
+        $this->assertEquals('LazyOption(...not evaluated...)', $lazy_opt->__toString());
+        $lazy_opt->getOrElse(0);
+        $this->assertEquals('LazyOption(Some(1))', $lazy_opt->__toString());
     }
 }

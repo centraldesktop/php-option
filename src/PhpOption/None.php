@@ -136,5 +136,9 @@ final class None extends Option
         return $initialValue;
     }
 
+    public function __toString() {
+        return "None()";
+    }
+
     private function __construct() { }
 }
