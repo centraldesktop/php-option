@@ -7,9 +7,8 @@ use PhpOption\LazyOption;
 use PhpOption\None;
 use PhpOption\Option;
 use PhpOption\Some;
-use PHPUnit\Framework\TestCase;
 
-class OptionTest extends TestCase
+class OptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testfromValueWithDefaultNoneValue()
     {

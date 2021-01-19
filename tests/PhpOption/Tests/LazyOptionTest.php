@@ -8,11 +8,10 @@ use PhpOption\LazyOption;
 use PhpOption\None;
 use PhpOption\Option;
 use PhpOption\Some;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
-class LazyOptionTest extends TestCase
+class LazyOptionTest extends \PHPUnit_Framework_TestCase
 {
     private $subject;
 

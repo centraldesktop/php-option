@@ -5,11 +5,10 @@ namespace PhpOption\Tests;
 use LogicException;
 use PhpOption\None;
 use PhpOption\Some;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
-class NoneTest extends TestCase
+class NoneTest extends \PHPUnit_Framework_TestCase
 {
     private $none;
 

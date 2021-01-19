@@ -5,14 +5,13 @@ namespace PhpOption\Tests;
 use PhpOption\None;
 use PhpOption\Option;
 use PhpOption\Some;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for Option::ensure() method
  *
  * @covers Option::ensure
  */
-class EnsureTest extends TestCase
+class EnsureTest extends \PHPUnit_Framework_TestCase
 {
     protected function ensure($value, $noneValue = null)
     {

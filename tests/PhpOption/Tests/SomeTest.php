@@ -2,15 +2,14 @@
 
 namespace PhpOption\Tests;
 
-use PHPUnit\Framework\TestCase;
-use stdClass;
-use ArrayObject;
 use ArrayIterator;
+use ArrayObject;
 use PhpOption\None;
 use PhpOption\Some;
 use RuntimeException;
+use stdClass;
 
-class SomeTest extends TestCase
+class SomeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
