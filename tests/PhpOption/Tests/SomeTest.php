@@ -2,11 +2,12 @@
 
 namespace PhpOption\Tests;
 
-use stdClass;
-use ArrayObject;
 use ArrayIterator;
+use ArrayObject;
 use PhpOption\None;
 use PhpOption\Some;
+use RuntimeException;
+use stdClass;
 
 class SomeTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +17,7 @@ class SomeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $some->getOrThrow(new \RuntimeException('Not found')));
+        $this->assertEquals('foo', $some->getOrThrow(new RuntimeException('Not found')));
         $this->assertFalse($some->isEmpty());
     }
 
@@ -26,7 +27,7 @@ class SomeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $some->get());
         $this->assertEquals('foo', $some->getOrElse(null));
         $this->assertEquals('foo', $some->getOrCall('does_not_exist'));
-        $this->assertEquals('foo', $some->getOrThrow(new \RuntimeException('Not found')));
+        $this->assertEquals('foo', $some->getOrThrow(new RuntimeException('Not found')));
         $this->assertFalse($some->isEmpty());
     }
 
@@ -177,6 +178,21 @@ class SomeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $extractedValue);
         $this->assertEquals(1, $called);
     }
+
+    public function testToString()
+    {
+        $some1 = new Some(1);
+        $some2 = new Some("1");
+        $some3 = new Some(new stdClass());
+        $some4 = new Some(new NoToString());
+        $some5 = new Some(new WithToString());
+
+        $this->assertEquals('Some(1)',                                        $some1->__toString());
+        $this->assertEquals('Some(1)',                                        $some2->__toString());
+        $this->assertEquals('Some(stdClass(...))',                            $some3->__toString());
+        $this->assertEquals('Some(PhpOption\Tests\NoToString(...))',          $some4->__toString());
+        $this->assertEquals('Some(PhpOption\Tests\WithToString(this is OK))', $some5->__toString());
+    }
 }
 
 // For the interested reader of these tests, we have gone some great lengths
@@ -214,5 +230,12 @@ class Repository
     public function getDefaultUser()
     {
         return array('name' => 'muhuhu');
+    }
+}
+
+class NoToString {}
+class WithToString {
+    public function __toString() {
+        return get_class($this) . '(this is OK)';
     }
 }

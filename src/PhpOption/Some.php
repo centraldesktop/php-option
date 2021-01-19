@@ -179,4 +179,14 @@ final class Some extends Option
     {
         return call_user_func($callable, $this->value, $initialValue);
     }
+
+    public function __toString()
+    {
+        if (!is_object($this->value)) {
+            return "Some($this->value)";
+        }
+
+        $object_class = get_class($this->value);
+        return method_exists($this->value, '__toString') ? "Some({$this->value})" : "Some($object_class(...))";
+    }
 }
