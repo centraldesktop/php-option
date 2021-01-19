@@ -2,19 +2,19 @@
 
 namespace PhpOption\Tests;
 
-use LogicException;
+use stdClass;
 use PhpOption\None;
 use PhpOption\Some;
-use RuntimeException;
-use stdClass;
 
 class NoneTest extends \PHPUnit_Framework_TestCase
 {
     private $none;
 
+    /**
+     * @expectedException \RuntimeException
+     */
     public function testGet()
     {
-        $this->expectException(RuntimeException::class);
         $none = None::create();
         $none->get();
     }
@@ -31,11 +31,13 @@ class NoneTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $none->getOrCall(function() { return 'foo'; }));
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Not Found!
+     */
     public function testGetOrThrow()
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("Not Found!");
-        None::create()->getOrThrow(new RuntimeException('Not Found!'));
+        None::create()->getOrThrow(new \RuntimeException('Not Found!'));
     }
 
     public function testIsEmpty()
@@ -53,42 +55,42 @@ class NoneTest extends \PHPUnit_Framework_TestCase
     public function testifDefined()
     {
         $this->assertNull($this->none->ifDefined(function() {
-            throw new LogicException('Should never be called.');
+            throw new \LogicException('Should never be called.');
         }));
     }
 
     public function testForAll()
     {
         $this->assertSame($this->none, $this->none->forAll(function() {
-            throw new LogicException('Should never be called.');
+            throw new \LogicException('Should never be called.');
         }));
     }
 
     public function testMap()
     {
         $this->assertSame($this->none, $this->none->map(function() {
-            throw new LogicException('Should not be called.');
+            throw new \LogicException('Should not be called.');
         }));
     }
 
     public function testFlatMap()
     {
         $this->assertSame($this->none, $this->none->flatMap(function() {
-            throw new LogicException('Should not be called.');
+            throw new \LogicException('Should not be called.');
         }));
     }
 
     public function testFilter()
     {
         $this->assertSame($this->none, $this->none->filter(function() {
-            throw new LogicException('Should not be called.');
+            throw new \LogicException('Should not be called.');
         }));
     }
 
     public function testFilterNot()
     {
         $this->assertSame($this->none, $this->none->filterNot(function() {
-            throw new LogicException('Should not be called.');
+            throw new \LogicException('Should not be called.');
         }));
     }
 

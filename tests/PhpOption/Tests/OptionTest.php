@@ -2,11 +2,10 @@
 
 namespace PhpOption\Tests;
 
-use LogicException;
-use PhpOption\LazyOption;
 use PhpOption\None;
-use PhpOption\Option;
 use PhpOption\Some;
+use PhpOption\Option;
+use PhpOption\LazyOption;
 
 class OptionTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,7 +62,7 @@ class OptionTest extends \PHPUnit_Framework_TestCase
 
     public function testOrElseWithLazyOptions()
     {
-        $throws = function() { throw new LogicException('Should never be called.'); };
+        $throws = function() { throw new \LogicException('Should never be called.'); };
 
         $a = new Some('a');
         $b = new LazyOption($throws);
@@ -73,7 +72,7 @@ class OptionTest extends \PHPUnit_Framework_TestCase
 
     public function testOrElseWithMultipleAlternatives()
     {
-        $throws = new LazyOption(function() { throw new LogicException('Should never be called.'); });
+        $throws = new LazyOption(function() { throw new \LogicException('Should never be called.'); });
         $returns = new LazyOption(function() { return new Some('foo'); });
 
         $a = None::create();

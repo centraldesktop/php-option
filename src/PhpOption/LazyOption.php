@@ -161,11 +161,6 @@ final class LazyOption extends Option
         return $this->option()->foldRight($initialValue, $callable);
     }
 
-    public function __toString()
-    {
-        return is_null($this->option) ? 'LazyOption(...not evaluated...)' : "LazyOption({$this->option})";
-    }
-
     /**
      * @return Option
      */
@@ -173,7 +168,7 @@ final class LazyOption extends Option
     {
         if (null === $this->option) {
             $this->option = call_user_func_array($this->callback, $this->arguments);
-            if (!($this->option instanceof Option)) {
+            if (!$this->option instanceof Option) {
                 $this->option = null;
                 throw new \RuntimeException('Expected instance of \PhpOption\Option');
             }

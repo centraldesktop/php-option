@@ -380,10 +380,4 @@ abstract class Option implements IteratorAggregate
      * @return mixed
      */
     abstract public function foldRight($initialValue, $callable);
-
-    /**
-     * String representation of the value.
-     * @return string
-     */
-    abstract public function __toString();
 }
